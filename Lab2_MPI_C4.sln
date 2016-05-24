@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab2_MPI_C4", "Lab2_MPI_C4\Lab2_MPI_C4.csproj", "{9B13E00C-0C48-4931-9FB1-F4C470F8B79E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C4_Game", "C4_Game\C4_Game.csproj", "{8166918E-E875-41CD-AAD5-7F988ED45D09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B13E00C-0C48-4931-9FB1-F4C470F8B79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B13E00C-0C48-4931-9FB1-F4C470F8B79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B13E00C-0C48-4931-9FB1-F4C470F8B79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B13E00C-0C48-4931-9FB1-F4C470F8B79E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8166918E-E875-41CD-AAD5-7F988ED45D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8166918E-E875-41CD-AAD5-7F988ED45D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8166918E-E875-41CD-AAD5-7F988ED45D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8166918E-E875-41CD-AAD5-7F988ED45D09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

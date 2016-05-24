@@ -1,0 +1,117 @@
+
+<!-- saved from url=(0064)http://www.fer.unizg.hr/_download/repository/vjezba2%5B2%5D.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Paralelno programiranje u raspodijeljenim sustavima - druga lab. 
+		vjezba</title>
+		<meta http-equiv="Content-Language" content="en-us">
+		<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+		<meta name="ProgId" content="FrontPage.Editor.Document">
+		
+	<style type="text/css"></style></head>
+	<body>
+		<h3>Paralelno programiranje </h3>
+		<h2>Druga domaća zadaća</h2>
+		<hr>
+		<p><b>Zadatak</b>: uporabom MPI-a ostvariti program za igranje uspravne igre <i>
+		"4 u nizu"</i>&nbsp; (<i>connect 4</i>) za jednog igrača (čovjek protiv računala).</p>
+		<p><b>Opis igre</b>: igra je istovjetna igri križić-kružić u kojoj je 
+		cilj napraviti niz od 4 igračeva znaka, s tom razlikom da se odvija na 
+		'uspravnom' 2D polju u kojemu se novi znak može staviti samo na polje 
+		ispod kojega već postoji neki znak ili se stavlja na dno polja ('ajmo 
+		reć' uz gravitaciju). Standardne dimenzije igračeg polja su 6 polja u 
+		visinu i 7 u širinu, mada je veličina proizvoljna. Zbog jednostavnosti, 
+		može se pretpostaviti da polje nije ograničeno u visinu, dok ograničenje 
+		u širinu mora postojati zbog ograničavanja broja mogućih poteza iz 
+		zadanog stanja.</p>
+		<p><b>Opis slijednog algoritma</b>: neka metoda rješavanja bude 
+		djelomično pretraživanje prostora stanja, u obliku stabla, do neke 
+		zadane dubine od trenutnog stanja. Dakle, ne pokušavamo <i>naučiti </i>
+		strategiju, već se za svaki potez računala obavlja pretraga podstabla i 
+		odabire sljedeće stanje (<i>brute force </i>pristup)<i>. </i>Za svako se 
+		stanje u stablu određuje vrsta:</p>
+		<ul>
+			<li>
+			stanje je 'pobjeda' ako računalo ima 4 u nizu (vrijednost 1);
+			</li><li>
+			stanje je 'poraz' ako igrač ima 4 u nizu (vrijednost -1);
+			</li><li>
+				inače, stanje je neutralno, a vrijednost <span lang="hr">će
+				</span>ovisiti o stanjima u 
+				podstablu (ako se podstabla pretra<span lang="hr">žuju</span>).</li>
+		</ul>
+		<p><i>HINT: potra<span lang="hr">gu za 4 u nizu treba obaviti samo sa 
+		polja posljednjeg odigranog poteza.</span></i></p>
+		<p>Nakon pretraživanja stabla do zadane dubine, primjenjuju se sljedeća 
+		rekurzivna pravila:</p>
+		<ol>
+			<li>
+			ako je neko stanje 'pobjeda' i ako se u njega dolazi potezom računala, 
+			tada je i nadređeno stanje također 'pobjeda' (jer računalo 
+			iz nadređenog stanja uvijek može pobijediti, potezom koji vodi u 
+			stanje pobjede);
+			</li><li>
+			ako je stanje 'poraz' i ako se u njega dolazi potezom igrača 
+			(protivnika), tada je i nadređeno stanje 'poraz' (jer iz 
+			nadređenog stanja igrač može jednim potezom pobijediti);
+			</li><li>
+				ako su sva podstanja nekog stanja 'pobjeda' ili 'poraz', tada je 
+				i nadređeno stanje iste vrste.</li>
+		</ol>
+		<p>Osim ovim pravilima, svaki se mogući potez računala (odnosno stanje u koje se 
+		tim potezom dolazi) ocjenjuje promatranjem broja 
+		i dubine <i>pobjedničkih</i> stanja u podstablu u koje taj potez vodi. Mjera 
+		kvalitete poteza definira se rekurzivno kao razlika broja pobjedničkih 
+		stanja i broja poraza na nekoj dubini, podijeljenih sa umnoškom broja 
+		mogućih poteza do te dubine, odnosno:</p>
+		<p align="center"><span style="FONT-SIZE: 12pt"><font face="Symbol">S_</font><font face="Times New Roman">n 
+		(broj_pobjeda_u_dubini_n - 
+		broj_poraza_u_dubini_n)/[(broj_mogućih_poteza)^(n)]</font></span></p>
+		<p>B<span lang="hr">roj mogućih poteza se može smatrati konstantnim 
+		(npr. 7) uz pretpostavku o neograničenosti polja u visinu</span>, a u 
+		stvarnim uvjetima potrebno je uzeti u obzir samo moguće poteze (ako 
+		je neki stupac popunjen)<span lang="hr">. Računalo tada odabire onaj 
+		potez koji ne vodi u stanje 'poraz' (ako ima izbora) a koji ima najveću 
+		vrijednost (vrijednosti su po opisanoj definiciji u intervalu </span>
+		[-1,1]<span lang="hr">). Eventualna dodatna pojašnjenja dana su na 
+		predavanjima<i>.</i></span><i> </i>
+		</p>
+		<p><i> NAPOMENA: mogu</i><i><span lang="hr">će je uporabiti i neku drugu 
+		(bolju)&nbsp;funkciju ocjene poteza</span>!</i><span lang="hr">.</span></p>
+		<p><span lang="hr"><b>Ostvarenje paralelnog algoritma</b>: Program treba 
+		imati minimalno tekstno sučelje u obliku prikaza stanja polja i upita 
+		igrača o potezu. Računanje vrijednosti pojedinog poteza treba načiniti 
+		raspodijeljeno, a minimalna dubina pretraživanja stabla <i>n</i> je 4 
+		(složenost je </span>7^<i>n</i>). Minimalni broj zadataka paralelnog 
+		algoritma je broj mogućih poteza (7), no taj broj je potrebno povećati 
+		(npr. dijeljenjem pri većoj dubini) poradi boljeg ujednačavanja 
+		opterećenja po procesorima.
+		<br>
+		<b><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rje<span lang="hr">šenje 
+		u kojemu postoji stalan broj od </span>najvi<span lang="hr">še 7 </span>
+		zadataka (<span lang="hr">radnika</span>)<span lang="hr"> nije prihvatljivo!</span></i></b></p>
+		<p><strong>Predaja zadaće:</strong>&nbsp;</p><ul>
+			<li><span lang="hr">Paralelni 
+		algoritam je potrebno <strong>dokumentirati
+				</strong>tako da se ukratko opišu četiri faze razvoja: podjela, 
+		komunikacija, aglomeracija i pridruživanje</span> (samo elektroni<span lang="hr">č</span>ki 
+			dokument)<span lang="hr">. </span></li>
+			<li><span lang="hr">Osim same implementacije, potrebno je 
+		empirijski utvrditi </span><b>ubrzanje i </b><span lang="hr"><b>učinkovitost 
+			</b>algoritma (definicija na predavanju) 
+		mjerenjem trajanja programa (trajanje jednog poteza računala na samom 
+		početku igre) na broju procesora P = 1,..,8. Mjerenje je potrebno 
+		obavljati na početku igre kada su uvjeti jednaki, a rezultate pripremiti 
+			u elektroničkom obliku, grafički i tablično. Mjerenja treba provesti 
+			tako da je najmanje mjereno trajanje (za 8 procesora) <b>reda 
+			veličine barem nekoliko sekundi </b>(definirajte potrebnu dubinu 
+			pretraživanja). Za mjerenje je potrebno 8 procesora odnosno 8 
+			jezgara (<i>hyperthreading</i> se </span>u pravilu <span lang="hr">
+			ne broji!)</span><i> <span lang="hr">Dobivene rezultate potrebno je 
+		komentirati (obrazložiti)!</span></i><span lang="hr"><span lang="hr">
+			</span></span></li>
+			</ul>
+			<hr>
+		<p></p>
+	
+
+<div id="window-resizer-tooltip"><a href="http://www.fer.unizg.hr/_download/repository/vjezba2%5B2%5D.html#" title="Edit settings"></a><span class="tooltipTitle">Window size: </span><span class="tooltipWidth" id="winWidth"></span> x <span class="tooltipHeight" id="winHeight"></span><br><span class="tooltipTitle">Viewport size: </span><span class="tooltipWidth" id="vpWidth"></span> x <span class="tooltipHeight" id="vpHeight"></span></div></body></html>
