@@ -166,6 +166,7 @@ namespace Lab2_MPI_C4
             Console.WriteLine("Process #" + comm.Rank + " is waiting.");
             comm.Barrier();
             Console.WriteLine("Process #" + comm.Rank + " is continuing.");
+            comm.Barrier();
 
             // Receive tasks.
             if (comm.Rank != 0)
