@@ -23,7 +23,7 @@ namespace Lab2_MPI_C4
     class Program
     {
         static C4Game game = new C4Game();
-        static int targetDepth = 7;
+        static int targetDepth = 6;
         static int searchDepth = 0;
         static int initialDepth = 0;
         static int minTasks = 0;
@@ -235,13 +235,17 @@ namespace Lab2_MPI_C4
             {
                 // Fill task values.
                 fillResults(results, game.CurrentRoot);
-                //Console.WriteLine(game.CurrentRoot.PossibleMoves.Count);
+                foreach (var m in game.CurrentRoot.PossibleMoves)
+                {
+                    m.BoardState.PrintBoard();
+                    Console.WriteLine(m.Score);
+                    Console.WriteLine();
+                }
                 // Decide move.
-                game.DecideMove(true, initialDepth, 2, true);
+                game.DecideMove(true, initialDepth - 1, 2, true);
                 sw.Stop();
                 Console.WriteLine("Time: " + sw.Elapsed);
                 sw.Reset();
-                //game.DecideMove(true, searchDepth);
 
                 // Print state.
                 game.PrintCurrentState();

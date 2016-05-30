@@ -126,80 +126,154 @@ namespace C4_Game
             GenerateTree(CurrentRoot, depth, depth, solveOnly);
         }
 
-        private void GenerateTree(StateNode currentRoot, int depth, int maxDepth, bool solveOnly = false)
+        private void GenerateTree(StateNode currentRoot, int depth, int maxDepth, bool solveOnly = false, Dictionary<StateNode, double> results = null)
         {
             // Determine win states.
             currentRoot.UpdateState();
 
-            // Begining from root (current state), generate all possible moves recursively.
-            if (depth != 0 && currentRoot.State == 0)
+            if (solveOnly)
             {
-                // Generate possible moves for current node.
-                if (!solveOnly) currentRoot.GeneratePossibleMoves();
-
-                foreach (StateNode move in currentRoot.PossibleMoves)
+                // Begining from root (current state), generate all possible moves recursively.
+                if (depth > 1 && currentRoot.State == 0)
                 {
-                    // Call generation on each possible move recursively.
-                    GenerateTree(move, depth - 1, maxDepth, solveOnly);
-                }
-            }
-
-            if (currentRoot.PreviousBoardState != null)
-            {
-                // Now calculate states "backwards".
-                // First one to call this will be leaf, then his parent, and so on... until the root.
-                if (currentRoot.State == 1 && currentRoot.WhoseTurn == 1)
-                {
-                    // CPU can win from upper state.
-                    currentRoot.PreviousBoardState.State = 1;
-                }
-                else if (currentRoot.State == -1 && currentRoot.WhoseTurn == 2)
-                {
-                    // Player can win from upper state.
-                    currentRoot.PreviousBoardState.State = -1;
-                }
-            }
-
-            if (depth != 0)
-            {
-                // Calculate score
-                int numMoves = currentRoot.PossibleMoves.Count;
-                int numWins = 0;
-                int numLoss = 0;
-                foreach (StateNode move in currentRoot.PossibleMoves)
-                {
-                    if (move.State == 1)
-                        numWins++;
-                    else if (move.State == -1)
-                        numLoss++;
-                }
-                if (numMoves == numWins)
-                {
-                    // All possible moves lead to CPU victory.
-                    currentRoot.State = 1;
-                    currentRoot.Score = 1;
-                }
-                else if (numMoves == numLoss)
-                {
-                    // All possible moves lead to Human victory.
-                    currentRoot.State = -1;
-                    currentRoot.Score = -1;
-                }
-                else
-                {
-                    // it's not trivial (not all moves lead to win or loss)
-                    currentRoot.WinCount += numWins;
-                    currentRoot.LossCount += numLoss;
-                    currentRoot.NoEndCount += currentRoot.PossibleMoves.Count - numWins - numLoss;
                     foreach (StateNode move in currentRoot.PossibleMoves)
                     {
-                        currentRoot.WinCount += move.WinCount;
-                        currentRoot.LossCount += move.LossCount;
-                        currentRoot.NoEndCount += move.NoEndCount;
+                        // Call generation on each possible move recursively.
+                        GenerateTree(move, depth - 1, maxDepth, solveOnly, results);
                     }
-                    currentRoot.Score = (double)(currentRoot.WinCount - currentRoot.LossCount) / (currentRoot.WinCount + currentRoot.LossCount + currentRoot.NoEndCount);
+                }
+
+                if (currentRoot.PreviousBoardState != null)
+                {
+                    // Now calculate states "backwards".
+                    // First one to call this will be leaf, then his parent, and so on... until the root.
+                    if (currentRoot.State == 1 && currentRoot.WhoseTurn == 1)
+                    {
+                        // CPU can win from upper state.
+                        currentRoot.PreviousBoardState.State = 1;
+                    }
+                    else if (currentRoot.State == -1 && currentRoot.WhoseTurn == 2)
+                    {
+                        // Player can win from upper state.
+                        currentRoot.PreviousBoardState.State = -1;
+                    }
+                }
+
+                if (depth != 0)
+                {
+                    // Calculate score
+                    int numMoves = currentRoot.PossibleMoves.Count;
+                    int numWins = 0;
+                    int numLoss = 0;
+                    foreach (StateNode move in currentRoot.PossibleMoves)
+                    {
+                        if (move.State == 1)
+                            numWins++;
+                        else if (move.State == -1)
+                            numLoss++;
+                    }
+                    if (numMoves == numWins)
+                    {
+                        // All possible moves lead to CPU victory.
+                        currentRoot.State = 1;
+                        currentRoot.Score = 1;
+                    }
+                    else if (numMoves == numLoss)
+                    {
+                        // All possible moves lead to Human victory.
+                        currentRoot.State = -1;
+                        currentRoot.Score = -1;
+                    }
+                    else
+                    {
+                        // it's not trivial (not all moves lead to win or loss)
+                        currentRoot.WinCount += numWins;
+                        currentRoot.LossCount += numLoss;
+                        currentRoot.NoEndCount += currentRoot.PossibleMoves.Count - numWins - numLoss;
+                        foreach (StateNode move in currentRoot.PossibleMoves)
+                        {
+                            currentRoot.WinCount += move.WinCount;
+                            currentRoot.LossCount += move.LossCount;
+                            currentRoot.NoEndCount += move.NoEndCount;
+                        }
+                        currentRoot.Score = (double)(currentRoot.WinCount - currentRoot.LossCount) / (currentRoot.WinCount + currentRoot.LossCount + currentRoot.NoEndCount);
+                        //currentRoot.Score = currentRoot.PossibleMoves.Sum(m => m.Score) / currentRoot.PossibleMoves.Count;
+                    }
                 }
             }
+            else
+            {
+                // Begining from root (current state), generate all possible moves recursively.
+                if (depth != 0 && currentRoot.State == 0)
+                {
+                    // Generate possible moves for current node.
+                    if (!solveOnly) currentRoot.GeneratePossibleMoves();
+
+                    foreach (StateNode move in currentRoot.PossibleMoves)
+                    {
+                        // Call generation on each possible move recursively.
+                        GenerateTree(move, depth - 1, maxDepth, solveOnly);
+                    }
+                }
+
+                if (currentRoot.PreviousBoardState != null)
+                {
+                    // Now calculate states "backwards".
+                    // First one to call this will be leaf, then his parent, and so on... until the root.
+                    if (currentRoot.State == 1 && currentRoot.WhoseTurn == 1)
+                    {
+                        // CPU can win from upper state.
+                        currentRoot.PreviousBoardState.State = 1;
+                    }
+                    else if (currentRoot.State == -1 && currentRoot.WhoseTurn == 2)
+                    {
+                        // Player can win from upper state.
+                        currentRoot.PreviousBoardState.State = -1;
+                    }
+                }
+
+                if (depth != 0)
+                {
+                    // Calculate score
+                    int numMoves = currentRoot.PossibleMoves.Count;
+                    int numWins = 0;
+                    int numLoss = 0;
+                    foreach (StateNode move in currentRoot.PossibleMoves)
+                    {
+                        if (move.State == 1)
+                            numWins++;
+                        else if (move.State == -1)
+                            numLoss++;
+                    }
+                    if (numMoves == numWins)
+                    {
+                        // All possible moves lead to CPU victory.
+                        currentRoot.State = 1;
+                        currentRoot.Score = 1;
+                    }
+                    else if (numMoves == numLoss)
+                    {
+                        // All possible moves lead to Human victory.
+                        currentRoot.State = -1;
+                        currentRoot.Score = -1;
+                    }
+                    else
+                    {
+                        // it's not trivial (not all moves lead to win or loss)
+                        currentRoot.WinCount += numWins;
+                        currentRoot.LossCount += numLoss;
+                        currentRoot.NoEndCount += currentRoot.PossibleMoves.Count - numWins - numLoss;
+                        foreach (StateNode move in currentRoot.PossibleMoves)
+                        {
+                            currentRoot.WinCount += move.WinCount;
+                            currentRoot.LossCount += move.LossCount;
+                            currentRoot.NoEndCount += move.NoEndCount;
+                        }
+                        currentRoot.Score = (double)(currentRoot.WinCount - currentRoot.LossCount) / (currentRoot.WinCount + currentRoot.LossCount + currentRoot.NoEndCount);
+                        //currentRoot.Score = currentRoot.PossibleMoves.Sum(m => m.Score) / currentRoot.PossibleMoves.Count;
+                    }
+                }
+            }            
         }
 
         /// <summary>
@@ -215,7 +289,8 @@ namespace C4_Game
             CurrentRoot.PossibleMoves.Shuffle();
 
             // Order moves by score descending.
-            List<StateNode> ordered = CurrentRoot.PossibleMoves.OrderByDescending(t => t.Score).ToList();
+            List<StateNode> ordered;
+            ordered = CurrentRoot.PossibleMoves.OrderByDescending(t => t.Score).ToList();
 
             if (ordered.Count == 0)
             {
@@ -251,7 +326,7 @@ namespace C4_Game
                 Insert(bestColumn, player);
 
                 // Inform human of the move.
-                Console.WriteLine("Best column: " + bestColumn);
+                Console.WriteLine("Best column: " + bestColumn + " (" + bestMove.Score + ")");
             }
             return CurrentRoot.Score;
         }
